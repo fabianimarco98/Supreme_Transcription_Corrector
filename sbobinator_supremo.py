@@ -8,63 +8,64 @@ def load_dict_from_json(json_path):
     
 def save_dict_to_json(words_to_replace, json_path):
     with open(json_path, 'w') as f:
-        json.dump(words_to_replace, f,indent=4)
+        json.dump(words_to_replace, f, indent=4)
 
-def convert_text(testo, words_to_replace):
-    parole = testo.split()
-    testo_con_parole_corrette = []
-    for parola in parole:
-        if parola in words_to_replace:
-            testo_con_parole_corrette.append(words_to_replace[parola])
+def convert_text(text, words_to_replace):
+    words = text.split()
+    corrected_text = []
+    for word in words:
+        if word in words_to_replace:
+            corrected_text.append(words_to_replace[word])
         else:
-            testo_con_parole_corrette.append(parola)
-    return ' '.join(testo_con_parole_corrette)
+            corrected_text.append(word)
+    return ' '.join(corrected_text)
 
-def converti_file(input_file, output_file, words_to_replace):
+def convert_file(input_file, output_file, words_to_replace):
     with open(input_file, 'r', encoding='utf-8') as f:
-        testo_input = f.read()
-    testo_output = convert_text(testo_input, words_to_replace)
+        input_text = f.read()
+    output_text = convert_text(input_text, words_to_replace)
     with open(output_file, 'w') as f:
-        f.write(testo_output)
+        f.write(output_text)
 
 def update_dict(words_to_replace, word, replacement):
     if word not in words_to_replace:
         words_to_replace[word] = replacement
-        print("Parola aggiunta con successo!")
+        print("Word added successfully!")
     else:
-        print("Parola già presente nel dizionario!")
+        print("Word already present in the dictionary!")
 
 def main():
-    json_path = input("Inserisci il percorso del file JSON: ")
+    json_path = input("Enter the path of the JSON file: ")
     words_to_replace = load_dict_from_json(json_path)
 
     x = True
     while x:
-        choice = int(input("1. Convertire testo?\n2. Aggiungere parola al dizionario?\n3. Eliminare parola dal dizionario?\n4.Uscita\nScelta:"))
+        choice = int(input("1. Convert text?\n2. Add word to dictionary?\n3. Delete word from dictionary?\n4. Exit\nChoice: "))
         if choice == 1:
-            input_file = input("Inserisci il percorso del file di input: ")
-            output_file = input("Inserisci il percorso del file di output: ")
-            converti_file(input_file, output_file, words_to_replace)
-            print("File convertito con successo!")
+            input_file = input("Enter the path of the input file: ")
+            output_file = input("Enter the path of the output file: ")
+            convert_file(input_file, output_file, words_to_replace)
+            print("File converted successfully!")
         elif choice == 2:
-            word = input("Inserisci parola da sostituire: ")
-            replacement = input("Inserisci parola di sostituzione: ")
+            word = input("Enter word to replace: ")
+            replacement = input("Enter replacement word: ")
             update_dict(words_to_replace, word, replacement)
             save_dict_to_json(words_to_replace, json_path)
         elif choice == 3:
-            word = input("inserisci parola da eliminare: ")
+            word = input("Enter word to delete: ")
             if word in words_to_replace:
                 del words_to_replace[word]
-                print("Parola eliminata con successo!")
+                print("Word deleted successfully!")
                 save_dict_to_json(words_to_replace, json_path)
             else:
-                choice2=input("Parola non presente nel dizionario!\n Vuoi aggiungerla (S/N)?: ")
-                if choice2.capitalize()=="S":
-                    replacement = input("Inserisci parola di sostituzione: ")
+                choice2 = input("Word not present in the dictionary!\nDo you want to add it (Y/N)?: ")
+                if choice2.capitalize() == "Y":
+                    replacement = input("Enter replacement word: ")
                     update_dict(words_to_replace, word, replacement)
                     save_dict_to_json(words_to_replace, json_path)
-        elif choice ==4:
-            print("Uscita...")
+        elif choice == 4:
+            print("Exiting...")
             x = False
+
 if __name__ == "__main__":
     main()
