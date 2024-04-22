@@ -22,7 +22,3 @@ python Supreme_Transcription_Corrector.py
 ```
 
 *Supreme Transcription Corrector* offers a convenient solution for refining transcribed text, enhancing its accuracy, and ensuring a superior viewing experience for multimedia content.
-
----
-
-Feel free to adjust the description further to match the specifics of your program!
