@@ -1,7 +1,3 @@
-Got it! Here's the revised description:
-
----
-
 **Supreme Transcription Corrector**
 
 *Supreme Transcription Corrector* is a Python script designed to enhance the accuracy and readability of transcribed text, particularly subtitle files. The program offers a comprehensive set of features, including the ability to convert text, add, update, and delete word replacements in a conversion dictionary.
