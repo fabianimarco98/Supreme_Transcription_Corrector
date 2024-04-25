@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 def convert_sbv_to_txt(sbv_file_path):
     # Check if the .sbv file exists
@@ -11,8 +12,16 @@ def convert_sbv_to_txt(sbv_file_path):
     with open(sbv_file_path, 'r', encoding='utf-8') as f:
         sbv_lines = f.readlines()
 
+    '''
     # Remove lines containing timestamps
     filtered_lines = [line for line in sbv_lines if not line.strip().startswith('0:')]   
+    # Join the remaining lines to form the .txt content
+    txt_content = ' '.join(filtered_lines)
+    '''
+    # Define a regular expression pattern to match timestamps
+    timestamp_pattern = r'\d+:\d+:\d+.\d+,\d+:\d+:\d+.\d+'
+    # Remove lines containing timestamps
+    filtered_lines = [line for line in sbv_lines if not re.match(timestamp_pattern, line.strip())]
     # Join the remaining lines to form the .txt content
     txt_content = ' '.join(filtered_lines)
 
@@ -42,14 +51,16 @@ def save_dict_to_json(words_to_replace, json_path):
         json.dump(words_to_replace, f, indent=4)
 
 def convert_text(text, words_to_replace):
-    words = text.split()
-    corrected_text = []
-    for word in words:
-        if word in words_to_replace:
-            corrected_text.append(words_to_replace[word])
-        else:
-            corrected_text.append(word)
-    return ' '.join(corrected_text)
+    lines = text.split('\n')  # Dividi il testo nelle righe
+    corrected_lines = []
+    for line in lines:
+        corrected_line = line
+        for key, value in words_to_replace.items():
+            corrected_line = corrected_line.replace(key, value)  # Sostituisci direttamente sulla riga
+        corrected_lines.append(corrected_line)
+    corrected_text='\n'.join(corrected_lines)  # Riunisci le righe corrette in un unico testo 
+    words = corrected_text.split()  # Dividi il testo corretto nelle parole
+    return ' '.join(words)  # Unisci le parole con uno spazio singolo
 
 def convert_file(input_file, output_file, words_to_replace):
     with open(input_file, 'r', encoding='utf-8') as f:
@@ -66,18 +77,18 @@ def update_dict(words_to_replace, word, replacement):
         print("Word already present in the dictionary!")
 
 def main():
-    json_path = input("Enter the path of the JSON file: ")
+    json_path = input("Enter the path of the JSON file: ").strip("\"")
     words_to_replace = load_dict_from_json(json_path)
 
     x = True
     while x:
         choice = int(input("0. Convert .sbv to .txt\n1. Convert text?\n2. Add word to dictionary?\n3. Delete word from dictionary?\n4. Exit\nChoice: "))
         if choice == 0:
-            input_file = input("Enter the path of the .sbv file to convert in .txt: ")
+            input_file = input("Enter the path of the .sbv file to convert in .txt: ").strip("\"")
             convert_sbv_to_txt(input_file)
         if choice == 1:
-            input_file = input("Enter the path of the input .txt file: ")
-            output_file = input("Enter the path of the output file: ")
+            input_file = input("Enter the path of the input .txt file: ").strip("\"")
+            output_file = input("Enter the path of the output file: ").strip("\"")
             convert_file(input_file, output_file, words_to_replace)
             print("File converted successfully!")
         elif choice == 2:
