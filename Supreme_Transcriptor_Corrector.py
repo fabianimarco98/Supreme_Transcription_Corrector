@@ -12,12 +12,7 @@ def convert_sbv_to_txt(sbv_file_path):
     with open(sbv_file_path, 'r', encoding='utf-8') as f:
         sbv_lines = f.readlines()
 
-    '''
-    # Remove lines containing timestamps
-    filtered_lines = [line for line in sbv_lines if not line.strip().startswith('0:')]   
-    # Join the remaining lines to form the .txt content
-    txt_content = ' '.join(filtered_lines)
-    '''
+
     # Define a regular expression pattern to match timestamps
     timestamp_pattern = r'\d+:\d+:\d+.\d+,\d+:\d+:\d+.\d+'
     # Remove lines containing timestamps
@@ -51,16 +46,19 @@ def save_dict_to_json(words_to_replace, json_path):
         json.dump(words_to_replace, f, indent=4)
 
 def convert_text(text, words_to_replace):
-    lines = text.split('\n')  # Dividi il testo nelle righe
+    # Replace multiple spaces with a single space
+    text = re.sub(r'\s+', ' ', text)
+    
+    lines = text.split('\n')  # Split the text into lines
     corrected_lines = []
     for line in lines:
         corrected_line = line
         for key, value in words_to_replace.items():
-            corrected_line = corrected_line.replace(key, value)  # Sostituisci direttamente sulla riga
-        corrected_lines.append(corrected_line)
-    corrected_text='\n'.join(corrected_lines)  # Riunisci le righe corrette in un unico testo 
-    words = corrected_text.split()  # Dividi il testo corretto nelle parole
-    return ' '.join(words)  # Unisci le parole con uno spazio singolo
+            pattern = r'(?<![a-zA-Z0-9])' + re.escape(key) + r'(?![a-zA-Z0-9])'
+            corrected_line = re.sub(pattern, value, corrected_line, flags=re.IGNORECASE)  # Replace only if the word is separated by spaces or punctuation
+        corrected_lines.append(corrected_line.strip())  # Remove leading and trailing spaces from each line
+    corrected_text = '\n'.join(corrected_lines)  # Join the corrected lines with a single newline
+    return corrected_text
 
 def convert_file(input_file, output_file, words_to_replace):
     with open(input_file, 'r', encoding='utf-8') as f:
