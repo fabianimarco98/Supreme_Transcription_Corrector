@@ -21,7 +21,7 @@ def convert_sbv_to_txt(sbv_file_path):
     txt_content = ' '.join(filtered_lines)
 
     # Ask the user for the output directory
-    output_dir = input("Insert the output directory: ")
+    output_dir = input("Insert the output directory: ").strip("\"")
     if not os.path.exists(output_dir):
         print("The specified output directory does not exist.")
         return None
@@ -64,8 +64,9 @@ def convert_file(input_file, output_file, words_to_replace):
     with open(input_file, 'r', encoding='utf-8') as f:
         input_text = f.read()
     output_text = convert_text(input_text, words_to_replace)
-    with open(output_file, 'w') as f:
+    with open(output_file, 'w', encoding='utf-8') as f:  # Modifica qui
         f.write(output_text)
+
 
 def update_dict(words_to_replace, word, replacement):
     if word not in words_to_replace:
